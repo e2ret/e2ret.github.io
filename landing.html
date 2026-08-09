@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOEMA RNSGate Lite — Off-Grid Mesh Gateway</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e14;--s1:#0f1419;--s2:#151c24;--bd:#1e2a35;
+  --teal:#14b8a6;--tx:#e2e8f0;--mu:#64748b;--am:#f59e0b;--gr:#22c55e;
+  --fn:'JetBrains Mono',monospace;--body:'Inter',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:var(--body);overflow-x:hidden;line-height:1.6}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 40px;background:rgba(10,14,20,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd)}
+.nav-logo{font-family:var(--fn);font-size:14px;font-weight:700;color:var(--tx)}
+.nav-logo span{color:var(--teal)}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{font-size:13px;color:var(--mu);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--teal)}
+.nav-cta{font-family:var(--fn);font-size:12px;font-weight:600;padding:8px 18px;background:transparent;border:1px solid var(--teal);border-radius:6px;color:var(--teal);cursor:pointer;text-decoration:none;transition:all .2s}
+.nav-cta:hover{background:rgba(20,184,166,.1)}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:120px 24px 80px;position:relative;overflow:hidden;text-align:center}
+canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.2;pointer-events:none}
+
+.hero-eyebrow{font-family:var(--fn);font-size:11px;letter-spacing:.15em;color:var(--teal);text-transform:uppercase;margin-bottom:20px;position:relative}
+.hero-title{font-family:var(--fn);font-size:clamp(32px,6vw,64px);font-weight:700;line-height:1.1;margin-bottom:20px;position:relative}
+.hero-title .lite{color:var(--teal)}
+.hero-subtitle{font-size:clamp(15px,2vw,18px);font-weight:300;color:var(--mu);max-width:520px;margin:0 auto 36px;position:relative}
+.hero-badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:44px;position:relative}
+.badge{font-family:var(--fn);font-size:11px;padding:4px 12px;border:1px solid var(--bd);border-radius:20px;color:var(--mu)}
+.badge.teal{border-color:rgba(20,184,166,.35);color:var(--teal)}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;position:relative}
+
+.btn-primary{font-family:var(--fn);font-size:13px;font-weight:600;padding:13px 28px;background:var(--teal);color:#000;border:none;border-radius:8px;cursor:pointer;text-decoration:none;transition:all .2s}
+.btn-primary:hover{background:#0d9488;transform:translateY(-1px)}
+.btn-secondary{font-family:var(--fn);font-size:13px;padding:13px 28px;background:transparent;border:1px solid var(--bd);color:var(--tx);border-radius:8px;cursor:pointer;text-decoration:none;transition:all .2s}
+.btn-secondary:hover{border-color:var(--teal);color:var(--teal)}
+
+.terminal-wrap{width:100%;max-width:640px;margin:56px auto 0;background:var(--s1);border:1px solid var(--bd);border-radius:12px;overflow:hidden;position:relative;text-align:left}
+.terminal-bar{display:flex;align-items:center;gap:6px;padding:12px 16px;background:var(--s2);border-bottom:1px solid var(--bd)}
+.dot{width:10px;height:10px;border-radius:50%}
+.dot.r{background:#ef4444}.dot.y{background:var(--am)}.dot.g{background:var(--gr)}
+.terminal-title{font-family:var(--fn);font-size:11px;color:var(--mu);margin-left:8px}
+.terminal-body{padding:18px 24px;font-family:var(--fn);font-size:12px;line-height:2}
+.t-mu{color:var(--mu)}.t-teal{color:var(--teal)}.t-am{color:var(--am)}.t-gr{color:var(--gr)}.t-tx{color:var(--tx)}
+
+section{padding:88px 24px}
+.container{max-width:1040px;margin:0 auto}
+.section-label{font-family:var(--fn);font-size:11px;letter-spacing:.15em;color:var(--teal);text-transform:uppercase;margin-bottom:12px}
+.section-title{font-size:clamp(24px,4vw,36px);font-weight:600;line-height:1.2;margin-bottom:16px}
+.section-body{font-size:15px;color:var(--mu);max-width:560px;line-height:1.7}
+
+.arch-block{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:24px 32px;font-family:var(--fn);font-size:13px;color:var(--teal);line-height:2.2;margin-top:32px;overflow-x:auto}
+
+.features{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:44px}
+.feat{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:24px;transition:border-color .2s}
+.feat:hover{border-color:rgba(20,184,166,.3)}
+.feat-icon{font-size:20px;margin-bottom:10px}
+.feat-title{font-family:var(--fn);font-size:13px;font-weight:600;color:var(--tx);margin-bottom:6px}
+.feat-body{font-size:13px;color:var(--mu);line-height:1.6}
+
+.inside-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:32px}
+.inside-item{display:flex;align-items:flex-start;gap:12px;padding:16px;background:var(--s1);border:1px solid var(--bd);border-radius:10px}
+.inside-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);margin-top:7px;flex-shrink:0}
+.inside-label{font-family:var(--fn);font-size:12px;color:var(--tx);margin-bottom:2px}
+.inside-desc{font-size:12px;color:var(--mu)}
+
+.pricing-card{max-width:420px;margin:44px auto 0;background:var(--s1);border:1px solid rgba(20,184,166,.3);border-radius:16px;padding:36px;text-align:center}
+.price-amount{font-family:var(--fn);font-size:52px;font-weight:700;color:var(--teal);line-height:1}
+.price-cur{font-size:22px;vertical-align:super}
+.price-label{font-size:13px;color:var(--mu);margin-top:6px;margin-bottom:28px}
+.price-list{list-style:none;text-align:left;margin-bottom:28px}
+.price-list li{font-size:13px;color:var(--mu);padding:7px 0;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px}
+.price-list li::before{content:"✓";color:var(--teal);font-weight:700;font-family:var(--fn)}
+.price-note{font-size:12px;color:var(--mu);margin-top:14px}
+.price-crypto{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;font-family:var(--fn);font-size:12px;color:var(--mu)}
+.crypto-badge{background:var(--s2);border:1px solid var(--bd);border-radius:6px;padding:3px 10px;color:var(--teal)}
+
+.contact-box{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:36px;margin-top:44px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+.contact-desc{font-size:14px;color:var(--mu);max-width:400px}
+.contact-link{font-family:var(--fn);font-size:13px;color:var(--teal);text-decoration:none;border:1px solid rgba(20,184,166,.3);padding:10px 20px;border-radius:8px;transition:background .2s}
+.contact-link:hover{background:rgba(20,184,166,.08)}
+
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--bd),transparent)}
+footer{border-top:1px solid var(--bd);padding:28px 24px;text-align:center;font-family:var(--fn);font-size:11px;color:var(--mu)}
+
+@media(max-width:640px){
+  nav{padding:14px 20px}
+  .nav-links{display:none}
+  .inside-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">NOEMA <span>RNSGate</span> Lite</div>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#inside">What's inside</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#pricing" class="nav-cta">Get it →</a>
+</nav>
+
+<section class="hero">
+  <canvas id="c"></canvas>
+  <div class="hero-eyebrow">Reticulum Mesh Gateway Software</div>
+  <h1 class="hero-title">Transmit meaning,<br>not just data.<br><span class="lite">Off the grid.</span></h1>
+  <p class="hero-subtitle">NOEMA RNSGate — a mesh gateway that carries encrypted messages over LoRa, I2P and TCP. No cloud. No servers. No one in between.</p>
+  <div class="hero-badges">
+    <span class="badge teal">LoRa · RNode</span>
+    <span class="badge teal">LXMF · Reticulum</span>
+    <span class="badge teal">Home Assistant MQTT</span>
+    <span class="badge">I2P</span>
+    <span class="badge">Nomadnet</span>
+    <span class="badge">Self-hosted</span>
+  </div>
+  <div class="hero-actions">
+    <a href="#pricing" class="btn-primary">Buy · $25</a>
+    <a href="#features" class="btn-secondary">See features</a>
+  </div>
+  <div class="terminal-wrap">
+    <div class="terminal-bar">
+      <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+      <span class="terminal-title">noema_lxmf_bridge — active</span>
+    </div>
+    <div class="terminal-body">
+      <div><span class="t-mu">[RNS]  </span><span class="t-teal">Transport instance started</span></div>
+      <div><span class="t-mu">[RNS]  </span><span class="t-gr">Announce sent → 3 interfaces</span></div>
+      <div><span class="t-mu">[LXMF] </span><span class="t-tx">Message from &lt;3a7f…b2c1&gt;: "lights on"</span></div>
+      <div><span class="t-mu">[MQTT] </span><span class="t-am">→ topic: message/lxmf/receive</span></div>
+      <div><span class="t-mu">[HA]   </span><span class="t-gr">Automation triggered: lights.living on</span></div>
+      <div><span class="t-mu">[LXMF] </span><span class="t-teal">Reply sent → "Done! 💡"</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="features">
+  <div class="container">
+    <div class="section-label">Capabilities</div>
+    <h2 class="section-title">Everything in one package</h2>
+    <p class="section-body">Built on Reticulum Network Stack — cryptography-first networking designed for unreliable, low-bandwidth links.</p>
+    <div class="features">
+      <div class="feat"><div class="feat-icon">📡</div><div class="feat-title">LoRa Mesh</div><div class="feat-body">Connect RNode devices via USB or WiFi. Long-range encrypted radio — no infrastructure, no license required.</div></div>
+      <div class="feat"><div class="feat-icon">🏠</div><div class="feat-title">Home Assistant Bridge</div><div class="feat-body">Send commands to HA over LoRa radio. Trigger automations from anywhere — even completely off-grid.</div></div>
+      <div class="feat"><div class="feat-icon">🔒</div><div class="feat-title">I2P Anonymous Network</div><div class="feat-body">Link two gateways anonymously without public IP. One-click tunnel setup from the dashboard.</div></div>
+      <div class="feat"><div class="feat-icon">🌐</div><div class="feat-title">Nomadnet Node</div><div class="feat-body">Host pages on the Reticulum network. Built-in browser, multi-page editor, Python scripts with cron scheduler.</div></div>
+      <div class="feat"><div class="feat-icon">⚙️</div><div class="feat-title">Web Dashboard</div><div class="feat-body">Full management UI on port 8081. Service control, live logs, config editor, version updates. No SSH required.</div></div>
+      <div class="feat"><div class="feat-icon">🤖</div><div class="feat-title">LXMF Bot</div><div class="feat-body">Built-in bot with /ping, /status, /info commands. Extensible — add your own handlers via MQTT automations.</div></div>
+    </div>
+    <div class="arch-block">
+<span style="color:var(--mu)">── How it works ──────────────────────────────────────────</span>
+
+  Phone ──BT──▶ RNode ──LoRa──▶  NOEMA RNSGate Lite  ──MQTT──▶ Home Assistant
+                                         │
+                                  I2P / TCP / LAN
+                                         │
+                                   Other gateway
+                                         │
+                                     Nomadnet
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="inside">
+  <div class="container">
+    <div class="section-label">Delivery</div>
+    <h2 class="section-title">What you get</h2>
+    <p class="section-body">A ZIP archive with full source code and everything needed to run on any Debian/Ubuntu Linux device.</p>
+    <div class="inside-grid">
+      <div class="inside-item"><div class="inside-dot"></div><div><div class="inside-label">install.sh</div><div class="inside-desc">One-command setup. Installs dependencies, configures systemd services, asks for MQTT credentials.</div></div></div>
+      <div class="inside-item"><div class="inside-dot"></div><div><div class="inside-label">Web Dashboard</div><div class="inside-desc">Flask UI on port 8081. Services, configs, logs, monitor, RNode, I2P, Nomadnet, System panels.</div></div></div>
+      <div class="inside-item"><div class="inside-dot"></div><div><div class="inside-label">LXMF Bridge Bot</div><div class="inside-desc">noema_lxmf_bridge — LXMF ↔ MQTT with built-in commands and full Home Assistant integration.</div></div></div>
+      <div class="inside-item"><div class="inside-dot"></div><div><div class="inside-label">All Services Pre-configured</div><div class="inside-desc">rnsd, noema_lxmf_bridge, i2pd, nomadnet, rbrowser — all set up as systemd units.</div></div></div>
+      <div class="inside-item"><div class="inside-dot"></div><div><div class="inside-label">Full Documentation</div><div class="inside-desc">README in English and Russian — installation, config, use cases, troubleshooting.</div></div></div>
+      <div class="inside-item"><div class="inside-dot"></div><div><div class="inside-label">Backup & Restore</div><div class="inside-desc">One-click backup of all configs, pages, scripts, identity keys. Restore from the dashboard.</div></div></div>
+    </div>
+    <div style="margin-top:20px;padding:14px 20px;background:var(--s1);border:1px solid var(--bd);border-radius:10px;font-family:var(--fn);font-size:12px;color:var(--mu)">
+      <span style="color:var(--teal)">Requirements: </span>Debian / Ubuntu · Python 3.10+ · Root access · x86_64 or ARM (Orange Pi, Raspberry Pi, mini PC…)
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="pricing">
+  <div class="container" style="text-align:center">
+    <div class="section-label">Pricing</div>
+    <h2 class="section-title">One-time payment</h2>
+    <p class="section-body" style="margin:0 auto">No subscription. No license server. Pay once — yours forever. Deploy on as many devices as you want.</p>
+    <div class="pricing-card">
+      <div class="price-amount"><span class="price-cur">$</span>25</div>
+      <div class="price-label">one-time · personal use</div>
+      <ul class="price-list">
+        <li>Full source code + install script</li>
+        <li>Web dashboard (all panels)</li>
+        <li>LXMF Bridge bot</li>
+        <li>Documentation EN + RU</li>
+        <li>Future updates via email</li>
+        <li>No cloud, no telemetry, no DRM</li>
+      </ul>
+      <a href="#contact" class="btn-primary" style="display:block;text-align:center">Order now →</a>
+      <div class="price-note">ZIP archive delivered via email within 24h after payment</div>
+      <div class="price-crypto">Payment: <span class="crypto-badge">USDT TRC20</span><span class="crypto-badge">BTC</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="contact">
+  <div class="container" style="text-align:center">
+    <div class="section-label">Order</div>
+    <h2 class="section-title">Get in touch</h2>
+    <div class="contact-box">
+      <p class="contact-desc">Write to get wallet address and delivery details. Response within a few hours.</p>
+      <a href="mailto:your@email.com" class="contact-link">📧 your@email.com</a>
+      <a href="https://t.me/yourusername" class="contact-link">✈ Telegram: @yourusername</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  NOEMA RNSGate Lite — built on <a href="https://reticulum.network" style="color:var(--teal);text-decoration:none">Reticulum Network Stack</a> by Mark Qvist (MIT) ·
+  <span style="color:#334155">Distributed as-is, no warranty</span>
+</footer>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let nodes = [], W, H;
+function resize(){W=canvas.width=canvas.offsetWidth;H=canvas.height=canvas.offsetHeight;}
+function init(){nodes=[];const n=Math.floor(W*H/16000);for(let i=0;i<n;i++)nodes.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35});}
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  const d=150;
+  for(let i=0;i<nodes.length;i++){
+    const a=nodes[i];a.x+=a.vx;a.y+=a.vy;
+    if(a.x<0||a.x>W)a.vx*=-1;if(a.y<0||a.y>H)a.vy*=-1;
+    for(let j=i+1;j<nodes.length;j++){
+      const b=nodes[j],dx=a.x-b.x,dy=a.y-b.y,dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<d){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle=`rgba(20,184,166,${(1-dist/d)*.5})`;ctx.lineWidth=.5;ctx.stroke();}
+    }
+    ctx.beginPath();ctx.arc(a.x,a.y,1.8,0,Math.PI*2);ctx.fillStyle='rgba(20,184,166,.8)';ctx.fill();
+  }
+  requestAnimationFrame(draw);
+}
+window.addEventListener('resize',()=>{resize();init();});
+resize();init();draw();
+</script>
+</body>
+</html>
