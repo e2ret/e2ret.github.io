@@ -64,6 +64,24 @@ section{padding:88px 24px}
 .feat-title{font-family:var(--fn);font-size:13px;font-weight:600;color:var(--tx);margin-bottom:6px}
 .feat-body{font-size:13px;color:var(--mu);line-height:1.6}
 
+.carousel{position:relative;margin-top:32px;border:1px solid var(--bd);border-radius:14px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.5);background:var(--s1)}
+.carousel-track{display:flex;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+.carousel-slide{flex:0 0 100%;width:100%;position:relative}
+.carousel-slide img{width:100%;display:block;aspect-ratio:21/10;object-fit:contain;background:var(--s2)}
+.carousel-slide .ph{width:100%;aspect-ratio:21/10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:
+    repeating-linear-gradient(135deg,var(--s2) 0 12px,var(--s1) 12px 24px);
+  color:var(--mu);font-family:var(--fn);font-size:12px}
+.carousel-slide .ph b{color:var(--teal);font-size:13px;letter-spacing:.04em}
+.carousel-caption{font-family:var(--fn);font-size:12px;color:var(--mu);padding:14px 20px;border-top:1px solid var(--bd);background:var(--s1)}
+.carousel-caption b{color:var(--tx);font-weight:600}
+.carousel-arrow{position:absolute;top:calc(50% - 22px);transform:translateY(-50%);width:38px;height:38px;border-radius:50%;background:rgba(10,14,20,.65);border:1px solid var(--bd);color:var(--tx);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1;backdrop-filter:blur(6px);transition:border-color .2s,color .2s}
+.carousel-arrow:hover{border-color:var(--teal);color:var(--teal)}
+.carousel-arrow.prev{left:14px}
+.carousel-arrow.next{right:14px}
+.carousel-dots{display:flex;justify-content:center;gap:8px;padding:16px 0}
+.carousel-dot{width:7px;height:7px;border-radius:50%;background:var(--bd);cursor:pointer;transition:background .2s,transform .2s;border:none;padding:0}
+.carousel-dot.active{background:var(--teal);transform:scale(1.4)}
+
 .inside-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:32px}
 .inside-item{display:flex;align-items:flex-start;gap:12px;padding:16px;background:var(--s1);border:1px solid var(--bd);border-radius:10px}
 .inside-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);margin-top:7px;flex-shrink:0}
@@ -177,9 +195,26 @@ footer{border-top:1px solid var(--bd);padding:28px 24px;text-align:center;font-f
   <div class="container">
     <div class="section-label">Dashboard</div>
     <h2 class="section-title">Full control from the browser</h2>
-    <p class="section-body">Monitor services, edit configs, view logs — all from port 8081. No SSH required.</p>
-    <div style="margin-top:32px;border:1px solid var(--bd);border-radius:14px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.5)">
-      <img src="https://raw.githubusercontent.com/e2ret/e2ret.github.io/main/CleanShot.png" alt="NOEMA RNSGate Lite Dashboard" style="width:100%;display:block">
+    <p class="section-body">Monitor services, edit configs, view logs, watch your mesh come alive on a live architecture map — all from port 8081, in light or dark. No SSH required.</p>
+
+    <div class="carousel" id="dashCarousel">
+      <div class="carousel-track" id="carouselTrack">
+        <div class="carousel-slide" data-title="Services" data-sub="— live architecture map"><img src="screenshots/services.png" alt="Services — live architecture map" onerror="this.outerHTML='&lt;div class=&quot;ph&quot;&gt;&lt;b&gt;Services&lt;/b&gt;&lt;span&gt;screenshots/services.png&lt;/span&gt;&lt;/div&gt;'"></div>
+        <div class="carousel-slide" data-title="Configs" data-sub="— edit RNS / LXMF / MQTT configs in-browser"><img src="screenshots/configs.png" alt="Configs — edit RNS / LXMF / MQTT configs in-browser" onerror="this.outerHTML='&lt;div class=&quot;ph&quot;&gt;&lt;b&gt;Configs&lt;/b&gt;&lt;span&gt;screenshots/configs.png&lt;/span&gt;&lt;/div&gt;'"></div>
+        <div class="carousel-slide" data-title="Addresses" data-sub="— LXMF identities and destinations"><img src="screenshots/addresses.png" alt="Addresses — LXMF identities and destinations" onerror="this.outerHTML='&lt;div class=&quot;ph&quot;&gt;&lt;b&gt;Addresses&lt;/b&gt;&lt;span&gt;screenshots/addresses.png&lt;/span&gt;&lt;/div&gt;'"></div>
+        <div class="carousel-slide" data-title="Monitor" data-sub="— LXMF traffic and RNS interfaces"><img src="screenshots/monitor.png" alt="Monitor — LXMF traffic and RNS interfaces" onerror="this.outerHTML='&lt;div class=&quot;ph&quot;&gt;&lt;b&gt;Monitor&lt;/b&gt;&lt;span&gt;screenshots/monitor.png&lt;/span&gt;&lt;/div&gt;'"></div>
+        <div class="carousel-slide" data-title="RNode" data-sub="— LoRa radio status and traffic charts"><img src="screenshots/rnode.png" alt="RNode — LoRa radio status and traffic charts" onerror="this.outerHTML='&lt;div class=&quot;ph&quot;&gt;&lt;b&gt;RNode&lt;/b&gt;&lt;span&gt;screenshots/rnode.png&lt;/span&gt;&lt;/div&gt;'"></div>
+        <div class="carousel-slide" data-title="Network" data-sub="— radial map of mesh peers"><img src="screenshots/network.png" alt="Network — radial map of mesh peers" onerror="this.outerHTML='&lt;div class=&quot;ph&quot;&gt;&lt;b&gt;Network&lt;/b&gt;&lt;span&gt;screenshots/network.png&lt;/span&gt;&lt;/div&gt;'"></div>
+        <div class="carousel-slide" data-title="I2P" data-sub="— anonymous tunnel setup"><img src="screenshots/i2p.png" alt="I2P — anonymous tunnel setup" onerror="this.outerHTML='&lt;div class=&quot;ph&quot;&gt;&lt;b&gt;I2P&lt;/b&gt;&lt;span&gt;screenshots/i2p.png&lt;/span&gt;&lt;/div&gt;'"></div>
+        <div class="carousel-slide" data-title="Nomadnet" data-sub="— page editor and node browser"><img src="screenshots/nomadnet.png" alt="Nomadnet — page editor and node browser" onerror="this.outerHTML='&lt;div class=&quot;ph&quot;&gt;&lt;b&gt;Nomadnet&lt;/b&gt;&lt;span&gt;screenshots/nomadnet.png&lt;/span&gt;&lt;/div&gt;'"></div>
+        <div class="carousel-slide" data-title="Chat" data-sub="— built-in LXMF messenger"><img src="screenshots/chat.png" alt="Chat — built-in LXMF messenger" onerror="this.outerHTML='&lt;div class=&quot;ph&quot;&gt;&lt;b&gt;Chat&lt;/b&gt;&lt;span&gt;screenshots/chat.png&lt;/span&gt;&lt;/div&gt;'"></div>
+        <div class="carousel-slide" data-title="Logs" data-sub="— live service logs"><img src="screenshots/logs.png" alt="Logs — live service logs" onerror="this.outerHTML='&lt;div class=&quot;ph&quot;&gt;&lt;b&gt;Logs&lt;/b&gt;&lt;span&gt;screenshots/logs.png&lt;/span&gt;&lt;/div&gt;'"></div>
+        <div class="carousel-slide" data-title="System" data-sub="— backup, updates, Telegram notifications"><img src="screenshots/system.png" alt="System — backup, updates, Telegram notifications" onerror="this.outerHTML='&lt;div class=&quot;ph&quot;&gt;&lt;b&gt;System&lt;/b&gt;&lt;span&gt;screenshots/system.png&lt;/span&gt;&lt;/div&gt;'"></div>
+      </div>
+      <button class="carousel-arrow prev" onclick="carouselMove(-1)" aria-label="Previous screenshot">‹</button>
+      <button class="carousel-arrow next" onclick="carouselMove(1)" aria-label="Next screenshot">›</button>
+      <div class="carousel-caption"><b id="carouselCaptionTitle">Services</b> <span id="carouselCaptionSub">— live architecture map</span></div>
+      <div class="carousel-dots" id="carouselDots"></div>
     </div>
   </div>
 </section>
@@ -272,6 +307,57 @@ function draw(){
 }
 window.addEventListener('resize',()=>{resize();init();});
 resize();init();draw();
+</script>
+
+<script>
+(function(){
+  const root = document.getElementById('dashCarousel');
+  if(!root) return;
+  const track = document.getElementById('carouselTrack');
+  const dotsWrap = document.getElementById('carouselDots');
+  const capTitle = document.getElementById('carouselCaptionTitle');
+  const capSub = document.getElementById('carouselCaptionSub');
+  const slides = [...track.children];
+  const meta = slides.map(s=>({ title: s.dataset.title || '', sub: s.dataset.sub || '' }));
+  let idx = 0, autoTimer = null;
+
+  slides.forEach((_,i)=>{
+    const d = document.createElement('button');
+    d.className = 'carousel-dot'+(i===0?' active':'');
+    d.setAttribute('aria-label','Go to screenshot '+(i+1));
+    d.onclick = ()=>goTo(i);
+    dotsWrap.appendChild(d);
+  });
+  const dots = [...dotsWrap.children];
+
+  function goTo(i){
+    idx = (i+slides.length)%slides.length;
+    track.style.transform = `translateX(-${idx*100}%)`;
+    dots.forEach((d,j)=>d.classList.toggle('active', j===idx));
+    if(meta[idx]){ capTitle.textContent = meta[idx].title; capSub.textContent = meta[idx].sub; }
+  }
+  window.carouselMove = (dir)=>{ goTo(idx+dir); restartAuto(); };
+
+  function restartAuto(){
+    clearInterval(autoTimer);
+    autoTimer = setInterval(()=>goTo(idx+1), 5000);
+  }
+  root.addEventListener('mouseenter', ()=>clearInterval(autoTimer));
+  root.addEventListener('mouseleave', restartAuto);
+
+  // touch swipe
+  let touchX = null;
+  track.addEventListener('touchstart', e=>{ touchX = e.touches[0].clientX; }, {passive:true});
+  track.addEventListener('touchend', e=>{
+    if(touchX===null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if(Math.abs(dx) > 40) carouselMove(dx < 0 ? 1 : -1);
+    touchX = null;
+  });
+
+  goTo(0);
+  restartAuto();
+})();
 </script>
 </body>
 </html>
